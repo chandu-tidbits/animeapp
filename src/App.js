@@ -1,5 +1,8 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+const TWITTER_LINK = "https://twitter.com/chanlan07";
+const TWITTER_HANDLE = "chanlan07";
 
 function App() {
   const checkIfWalletIsConnected = async () => {
@@ -22,7 +25,43 @@ function App() {
     return () => window.removeEventListener("load", onLoad);
   }, []);
 
-  return <div className="App"></div>;
+  const connectWallet = async () => {};
+
+  const renderNotConnectedContainer = () => (
+    <button
+      className="cta-button connect-wallet-button"
+      onClick={connectWallet}
+    >
+      Connect To Wallet
+    </button>
+  );
+
+  return (
+    <div className="App">
+      <div className="container">
+        <div className="header-container">
+          <p className="header">🖼 GIF Portal</p>
+          <p className="sub-text">
+            View your GIF collection in the metaverse ✨
+          </p>
+          {renderNotConnectedContainer()}
+        </div>
+        <div className="footer-container">
+          <img
+            alt="Twitter Logo"
+            className="twitter-logo"
+            src="https://raw.githubusercontent.com/buildspace/gif-portal-starter/dea9ce3dfdd7c67ab45a5048611533d6fc733073/src/assets/twitter-logo.svg"
+          />
+          <a
+            className="footer-text"
+            href={TWITTER_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >{`built on @${TWITTER_HANDLE}`}</a>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default App;
