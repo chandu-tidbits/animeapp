@@ -5,14 +5,15 @@ const TWITTER_LINK = "https://twitter.com/chanlan07";
 const TWITTER_HANDLE = "chanlan07";
 
 const TEST_GIFS = [
-  "https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp",
-  "https://media3.giphy.com/media/L71a8LW2UrKwPaWNYM/giphy.gif?cid=ecf05e47rr9qizx2msjucl1xyvuu47d7kf25tqt2lvo024uo&rid=giphy.gif&ct=g",
-  "https://media4.giphy.com/media/AeFmQjHMtEySooOc8K/giphy.gif?cid=ecf05e47qdzhdma2y3ugn32lkgi972z9mpfzocjj6z1ro4ec&rid=giphy.gif&ct=g",
-  "https://i.giphy.com/media/PAqjdPkJLDsmBRSYUp/giphy.webp",
+  "https://media1.giphy.com/media/dyjrpqaUVqCELGuQVr/giphy.gif?cid=ecf05e4736691mrsksowpnfho1c34p64euy5l5w7kr6u487x&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+  "https://media4.giphy.com/media/VXJWhaO7afRe/giphy.gif?cid=ecf05e47an12h9b01p3bjwwukekvtmrqq0c7ut7q739o4jxc&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+  "https://media0.giphy.com/media/PSf1mz68Z9mO4/giphy.gif?cid=ecf05e47u083wja4jozuwvl86dkzq88zvcsj79ea85qkv9ps&ep=v1_gifs_search&rid=giphy.gif&ct=g",
 ];
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+  const [gifList, setGifList] = useState([]);
 
   const checkIfWalletIsConnected = async () => {
     if (window.solana.isPhantom) {
@@ -36,6 +37,51 @@ function App() {
     return () => window.removeEventListener("load", onLoad);
   }, []);
 
+  useEffect(() => {
+    if (walletAddress) {
+      console.log("Fetching GIF List...");
+      setGifList(TEST_GIFS);
+    }
+  }, [walletAddress]);
+
+  const sendGif = async () => {
+    if (inputValue.length > 0) {
+      console.log("gif link:", inputValue);
+      setGifList([...gifList, inputValue]);
+      setInputValue("");
+    } else {
+      console.log("Empty input. Try again.");
+    }
+  };
+
+  const renderConnectedContainer = () => (
+    <div className="connected-container">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          sendGif();
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Enter GIF Link!"
+          value={inputValue}
+          onChange={onInputChange}
+        />
+        <button type="submit" className="cta-button submit-gif-button">
+          Submit
+        </button>
+      </form>
+      <div className="gif-grid">
+        {gifList.map((gif) => (
+          <div className="gif-item" key={gif}>
+            <img src={gif} alt={gif} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const connectWallet = async () => {
     const { solana } = window;
 
@@ -44,6 +90,11 @@ function App() {
       console.log("Connected with public key: ", res.publicKey.toString());
       setWalletAddress(res.publicKey.toString());
     }
+  };
+
+  const onInputChange = (event) => {
+    const { value } = event.target;
+    setInputValue(value);
   };
 
   const renderNotConnectedContainer = () => (
@@ -64,6 +115,7 @@ function App() {
             View your GIF collection in the metaverse ✨
           </p>
           {!walletAddress && renderNotConnectedContainer()}
+          {walletAddress && renderConnectedContainer()}
         </div>
         <div className="footer-container">
           <img
